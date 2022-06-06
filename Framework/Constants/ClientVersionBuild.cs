@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HermesProxy.Enums
+﻿namespace HermesProxy.Enums
 {
     public enum ClientVersionBuild
     {
@@ -383,6 +377,24 @@ namespace HermesProxy.Enums
         V9_1_5_41793 = 41793,
         V9_1_5_42010 = 42010,
 
+        V9_2_0_42423 = 42423,
+        V9_2_0_42488 = 42488,
+        V9_2_0_42521 = 42521,
+        V9_2_0_42538 = 42538,
+        V9_2_0_42560 = 42560,
+        V9_2_0_42614 = 42614,
+        V9_2_0_42698 = 42698,
+        V9_2_0_42852 = 42852,
+        V9_2_0_42937 = 42937,
+        V9_2_0_42979 = 42979,
+        V9_2_0_43114 = 43114,
+        V9_2_0_43206 = 43206,
+        V9_2_0_43340 = 43340,
+        V9_2_0_43345 = 43345,
+
+        V9_2_5_43903 = 43903,
+        V9_2_5_43971 = 43971,
+
         // Classic
         V1_13_2_31446 = 31446, // name reservation
         V1_13_2_31650 = 31650, // launch
@@ -503,8 +515,25 @@ namespace HermesProxy.Enums
         V2_5_2_40488 = 40488, // both live and ptr
         V2_5_2_40617 = 40617, // both live and ptr
         V2_5_2_40892 = 40892, // both live and ptr
-        V2_5_2_41446 = 41446, // live
-        V2_5_2_41510 = 41510, // live
+        V2_5_2_41446 = 41446, // both live and ptr
+        V2_5_2_41510 = 41510, // Live
+
+        V2_5_3_41812 = 41812, // both live and ptr
+        V2_5_3_42083 = 42083, // both live and ptr
+        V2_5_3_42328 = 42328, // both live and ptr
+        V2_5_3_42598 = 42598, // live
+
+        V2_5_4_42695 = 42695, // ptr
+        V2_5_4_42757 = 42757, // ptr
+        V2_5_4_42800 = 42800, // both live and ptr
+        V2_5_4_42869 = 42869, // live
+        V2_5_4_42870 = 42870, // ptr
+        V2_5_4_42873 = 42873, // both live and ptr
+        V2_5_4_42917 = 42917, // live
+        V2_5_4_42940 = 42940, // both live and ptr
+        V2_5_4_43400 = 43400, // live
+        V2_5_4_43638 = 43638, // both live and ptr
+        V2_5_4_43861 = 43861, // both live and ptr
 
         // Battle.net - should probably not mix this but oh well
         BattleNetV37165 = 37165,
