@@ -420,6 +420,8 @@ namespace HermesProxy
                 case ClientVersionBuild.V2_5_2_41446:
                 case ClientVersionBuild.V2_5_2_41510:
                     return ClientVersionBuild.V2_5_2_39570;
+                case ClientVersionBuild.V2_5_4_43861:
+                    return ClientVersionBuild.V2_5_2_39570; // DEBUG
             }
             return ClientVersionBuild.Zero;
         }
