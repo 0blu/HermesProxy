@@ -15,6 +15,8 @@ namespace HermesProxy.World.Server
         [PacketHandler(Opcode.CMSG_ARENA_TEAM_ROSTER)]
         void HandleArenaTeamRoster(ArenaTeamRosterRequest arena)
         {
+            Log.Print(LogType.Warn, $"Ignore {Opcode.CMSG_ARENA_TEAM_ROSTER}");
+            return;
             if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180) ||
                 GetSession().GameState.CurrentArenaTeamIds[arena.TeamIndex] == 0)
             {

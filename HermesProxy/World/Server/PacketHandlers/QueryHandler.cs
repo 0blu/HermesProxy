@@ -1,4 +1,5 @@
 ﻿using Framework.Constants;
+using Framework.Logging;
 using HermesProxy.World;
 using HermesProxy.World.Enums;
 using HermesProxy.World.Objects;
@@ -12,6 +13,8 @@ namespace HermesProxy.World.Server
         [PacketHandler(Opcode.CMSG_QUERY_TIME)]
         void HandleQueryTime(EmptyClientPacket queryTime)
         {
+            Log.Print(LogType.Warn, $"Ignore {Opcode.SMSG_PLAYED_TIME}");
+            return;
             WorldPacket packet = new WorldPacket(Opcode.CMSG_QUERY_TIME);
             SendPacketToServer(packet);
         }

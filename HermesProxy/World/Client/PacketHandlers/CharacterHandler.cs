@@ -4,6 +4,7 @@ using HermesProxy.World.Objects;
 using HermesProxy.World.Server.Packets;
 using System;
 using System.Collections.Generic;
+using Framework.Logging;
 
 namespace HermesProxy.World.Client
 {
@@ -236,7 +237,7 @@ namespace HermesProxy.World.Client
             verify.Pos.Y = packet.ReadFloat();
             verify.Pos.Z = packet.ReadFloat();
             verify.Pos.Orientation = packet.ReadFloat();
-            SendPacketToClient(verify);
+            //SendPacketToClient(verify);
 
             GetSession().GameState.IsInWorld = true;
 
@@ -246,18 +247,18 @@ namespace HermesProxy.World.Client
                 info.DifficultyID = 1;
                 info.InstanceGroupSize = 5;
             }
-            SendPacketToClient(info);
+            //SendPacketToClient(info);
 
             SetAllTaskProgress tasks = new();
-            SendPacketToClient(tasks);
+            //SendPacketToClient(tasks);
 
             InitialSetup setup = new();
             setup.ServerExpansionLevel = (byte)(LegacyVersion.GetExpansionVersion() - 1);
-            SendPacketToClient(setup);
+            //SendPacketToClient(setup);
 
             LoadCUFProfiles cuf = new();
             cuf.Data = GetSession().AccountDataMgr.LoadCUFProfiles();
-            SendPacketToClient(cuf);
+            //SendPacketToClient(cuf);
         }
 
         [PacketHandler(Opcode.SMSG_CHARACTER_LOGIN_FAILED)]
@@ -347,6 +348,8 @@ namespace HermesProxy.World.Client
         [PacketHandler(Opcode.SMSG_PLAYED_TIME)]
         void HandlePlayedTime(WorldPacket packet)
         {
+            Log.Print(LogType.Warn, $"Ignore {Opcode.SMSG_PLAYED_TIME}");
+            return;
             PlayedTime played = new();
             played.TotalTime = packet.ReadUInt32();
             played.LevelTime = packet.ReadUInt32();

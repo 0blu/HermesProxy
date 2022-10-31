@@ -22,6 +22,8 @@ namespace HermesProxy.World.Server
         [PacketHandler(Opcode.CMSG_REQUEST_RAID_INFO)]
         void HandleRequestRaidInfo(EmptyClientPacket reset)
         {
+            Log.Print(LogType.Warn, $"Ignore {Opcode.CMSG_REQUEST_RAID_INFO}");
+            return;
             WorldPacket packet = new WorldPacket(Opcode.CMSG_REQUEST_RAID_INFO);
             SendPacketToServer(packet);
         }

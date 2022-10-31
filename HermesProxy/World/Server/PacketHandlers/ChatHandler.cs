@@ -15,6 +15,8 @@ namespace HermesProxy.World.Server
         [PacketHandler(Opcode.CMSG_CHAT_JOIN_CHANNEL)]
         void HandleChatJoinChannel(JoinChannel join)
         {
+            Log.Print(LogType.Warn, $"Ignore {Opcode.CMSG_CHAT_JOIN_CHANNEL}");
+            return;
             WorldPacket packet = new WorldPacket(Opcode.CMSG_CHAT_JOIN_CHANNEL);
             if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
             {

@@ -4,6 +4,7 @@ using HermesProxy.World.Objects;
 using HermesProxy.World.Server.Packets;
 using System;
 using System.Collections.Generic;
+using Framework.Logging;
 
 namespace HermesProxy.World.Client
 {
@@ -46,6 +47,8 @@ namespace HermesProxy.World.Client
         [PacketHandler(Opcode.SMSG_RAID_INSTANCE_INFO)]
         void HandleRaidInstanceInfo(WorldPacket packet)
         {
+            Log.Print(LogType.Warn, $"Ignore {Opcode.SMSG_RAID_INSTANCE_INFO}");
+            return;
             RaidInstanceInfo infos = new RaidInstanceInfo();
             int count = packet.ReadInt32();
             for (var i = 0; i < count; ++i)
