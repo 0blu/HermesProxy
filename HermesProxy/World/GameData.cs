@@ -1005,6 +1005,8 @@ namespace HermesProxy.World
         public const uint HotfixCreatureDisplayInfoBegin = 220000;
         public const uint HotfixCreatureDisplayInfoExtraBegin = 230000;
         public const uint HotfixCreatureDisplayInfoOptionBegin = 240000;
+        public const uint HotfixGlobalStringsBegin = 250000;
+        public const uint HotfixTransportAnimationBegin = 260000;
         public static Dictionary<uint, HotfixRecord> Hotfixes = new Dictionary<uint, HotfixRecord>();
         public static void LoadHotfixes()
         {
@@ -1013,6 +1015,8 @@ namespace HermesProxy.World
             LoadSkillRaceClassInfoHotfixes();
             LoadSkillLineAbilityHotfixes();
             LoadSpellHotfixes();
+            LoadGlobalStringsHotfixes();
+            LoadTransportAnimationHotfixes();
             LoadSpellNameHotfixes();
             LoadSpellLevelsHotfixes();
             LoadSpellAuraOptionsHotfixes();
@@ -1297,6 +1301,93 @@ namespace HermesProxy.World
                     record.HotfixContent.WriteCString(description);
                     record.HotfixContent.WriteCString(auraDescription);
                     Hotfixes.Add(record.HotfixId, record);
+                }
+            }
+        }
+        public static void LoadGlobalStringsHotfixes()
+        {
+            return;
+            var path = Path.Combine("CSV", "Hotfix", "GlobalStrings.csv");
+            using (TextFieldParser csvParser = new TextFieldParser(path))
+            {
+                csvParser.CommentTokens = new string[] { "#" };
+                csvParser.SetDelimiters(new string[] { "," });
+                csvParser.HasFieldsEnclosedInQuotes = true;
+
+                // Skip the row with the column names
+                csvParser.ReadLine();
+
+                uint counter = 0;
+                while (!csvParser.EndOfData)
+                {
+                    counter++;
+
+                    // Read current line fields, pointer moves to the next line.
+                    string[] fields = csvParser.ReadFields();
+
+                    uint id = UInt32.Parse(fields[0]);
+                    string baseTag = fields[1];
+                    string tagText_Lang = fields[2];
+                    byte flags = byte.Parse(fields[3]);
+
+                    HotfixRecord record = new HotfixRecord();
+                    record.TableHash = DB2Hash.GlobalStrings;
+                    record.HotfixId = HotfixGlobalStringsBegin + counter;
+                    record.UniqueId = record.HotfixId;
+                    record.RecordId = id;
+                    record.Status = HotfixStatus.Valid;
+                    record.HotfixContent.WriteCString(baseTag);
+                    record.HotfixContent.WriteCString(tagText_Lang);
+                    record.HotfixContent.WriteUInt8(flags);
+                    Hotfixes.Add(record.HotfixId, record);
+                }
+            }
+        }
+        public static void LoadTransportAnimationHotfixes()
+        {
+            var path = Path.Combine("CSV", "Hotfix", "TransportAnimation.csv");
+            using (TextFieldParser csvParser = new TextFieldParser(path))
+            {
+                csvParser.CommentTokens = new string[] { "#" };
+                csvParser.SetDelimiters(new string[] { "," });
+                csvParser.HasFieldsEnclosedInQuotes = true;
+
+                // Skip the row with the column names
+                csvParser.ReadLine();
+
+                uint counter = 0;
+                while (!csvParser.EndOfData)
+                {
+                    counter++;
+
+                    // Read current line fields, pointer moves to the next line.
+                    string[] fields = csvParser.ReadFields();
+
+                    uint id = UInt32.Parse(fields[0]);
+                    uint transportId = UInt32.Parse(fields[1]);
+                    uint timeIndex = UInt32.Parse(fields[2]);
+                    float posX = float.Parse(fields[3]);
+                    float posY = float.Parse(fields[4]);
+                    float posZ = float.Parse(fields[5]);
+                    byte seqId = byte.Parse(fields[6]);
+
+                    HotfixRecord record = new HotfixRecord();
+                    record.TableHash = DB2Hash.TransportAnimation;
+                    record.HotfixId = HotfixTransportAnimationBegin + counter;
+                    record.UniqueId = record.HotfixId;
+                    record.RecordId = id;
+                    record.Status = HotfixStatus.Valid;
+                    record.HotfixContent.WriteFloat(posY);
+                    record.HotfixContent.WriteFloat(posX);
+                    record.HotfixContent.WriteFloat(posZ);
+                    record.HotfixContent.WriteUInt8(seqId);
+                    record.HotfixContent.WriteUInt32(timeIndex);
+                    record.HotfixContent.WriteUInt32(transportId);
+                    Hotfixes.Add(record.HotfixId, record);
+                    if (counter > 2)
+                    {
+                        //return;
+                    }
                 }
             }
         }
