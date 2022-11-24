@@ -2697,6 +2697,17 @@ namespace HermesProxy.World.Client
                         if (updateMaskArray[GAMEOBJECT_ROTATION + i])
                             updateData.CreateData.MoveInfo.Rotation[i] = updates[GAMEOBJECT_ROTATION + i].FloatValue;
                     }
+
+                    // Fix for deeprun tram. Some carts look like there are correct but their content is actually flipped.
+                    // So if other player enter the train on the left side, the modern client sees them teleporting from the right side
+                    // The motion is not affected by the Rotation. See TransportAnimation.csv Hotfix for this.
+                    // 176080=Tram South (Eastmost)    176084=Tram South (Middle)    176085=Tram North (Eastmost)
+                    if (updateData.ObjectData.EntryID is 176080 or 176084 or 176085)
+                    {
+                        var angle = updateData.CreateData.MoveInfo.Rotation.AsEulerAngles();
+                        angle.Yaw *= -1; // Rotate the cart by 180°
+                        updateData.CreateData.MoveInfo.Rotation = angle.AsQuaternion();
+                    }
                 }
                 int GAMEOBJECT_STATE = LegacyVersion.GetUpdateField(GameObjectField.GAMEOBJECT_STATE);
                 if (GAMEOBJECT_STATE >= 0 && updateMaskArray[GAMEOBJECT_STATE])

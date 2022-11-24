@@ -849,5 +849,38 @@ namespace Framework.GameMath
             return doubles;
         }
         #endregion
+
+        public EulerAngles AsEulerAngles()
+        {
+            double z = this.Z;
+            double y = this.Y;
+            double x = this.X;
+            double w = this.W;
+            
+            EulerAngles angles = new();
+
+            // roll / x
+            double sinr_cosp = 2 * (w * x + y * z);
+            double cosr_cosp = 1 - 2 * (x * x + y * y);
+            angles.Roll = (float)Math.Atan2(sinr_cosp, cosr_cosp);
+
+            // pitch / y
+            double sinp = 2 * (W * Y - Z * X);
+            if (Math.Abs(sinp) >= 1)
+            {
+                angles.Pitch = (float)Math.CopySign(Math.PI / 2, sinp);
+            }
+            else
+            {
+                angles.Yaw = (float)Math.Asin(sinp);
+            }
+
+            // yaw / z
+            double siny_cosp = 2 * (w * z + x * y);
+            double cosy_cosp = 1 - 2 * (y * y + z * z);
+            angles.Yaw = (float)Math.Atan2(siny_cosp, cosy_cosp);
+
+            return angles;
+        }
     }
 }
