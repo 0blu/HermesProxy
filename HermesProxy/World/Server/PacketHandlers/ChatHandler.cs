@@ -228,8 +228,9 @@ namespace HermesProxy.World.Server
         {
             uint language = (uint)Language.Addon;
             string text = packet.Params.Prefix + '\t' + packet.Params.Text;
-            string channelName = packet.ChannelGuid.IsEmpty() ? "" :
-                GetSession().GameState.GetChannelName((int)packet.ChannelGuid.GetCounter());
+            string channelName = packet.ChannelGuid.IsEmpty()
+                ? ""
+                : GetSession().GameState.GetChannelName((int)packet.ChannelGuid.GetCounter());
 
             if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
             {

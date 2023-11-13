@@ -926,7 +926,7 @@ namespace HermesProxy.World.Server
             features.BpayStoreProductDeliveryDelay = 180;
             features.HiddenUIClubsPresenceUpdateTimer = 60000;
             features.VoiceEnabled = false;
-            features.BrowserEnabled = false;
+            features.BrowserEnabled = true;
 
             features.EuropaTicketSystemStatus = new EuropaTicketConfig();
             features.EuropaTicketSystemStatus.ThrottleState.MaxTries = 10;

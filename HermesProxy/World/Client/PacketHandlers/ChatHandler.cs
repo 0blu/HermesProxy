@@ -222,14 +222,68 @@ namespace HermesProxy.World.Client
                 }
                 return;
             }
-            
+
             string addonPrefix = "";
-            if (!ChatPkt.CheckAddonPrefix(GetSession().GameState.AddonPrefixes, ref language, ref text, ref addonPrefix))
-                return;
+            if (language == (uint) Language.Addon)
+            {
+                bool isRegisteredPrefix = ChatPkt.CheckAddonPrefix(GetSession().GameState.AddonPrefixes, ref language, ref text, out addonPrefix);
+                if (chatType == ChatMessageTypeVanilla.Whisper && sender == GetSession().GameState.CurrentPlayerGuid)
+                {
+                    bool wasHermesProxyMessage = TryHandleHermesProxyAddonMessage(addonPrefix, text);
+                    if (wasHermesProxyMessage)
+                        return;
+                }
+                if (!isRegisteredPrefix)
+                    return;
+            }
 
             ChatMessageTypeModern chatTypeModern = (ChatMessageTypeModern)Enum.Parse(typeof(ChatMessageTypeModern), chatType.ToString());
             ChatPkt chat = new ChatPkt(GetSession(), chatTypeModern, text, language, sender, senderName, receiver, "", channelName, chatFlags, addonPrefix);
             SendPacketToClient(chat);
+        }
+
+        /// <returns>true when it was a valid HermesProxyAddon message</returns>
+        private bool TryHandleHermesProxyAddonMessage(string addonPrefix, string text)
+        {
+            // UPDATE_BROWSER_URL\t50;https://youtube.com/
+            // to update VISITABLE_URL50 (the default browser URL)
+            if (addonPrefix == "UPDATE_BROWSER_URL")
+            {
+                string[] splitted = text.Split(';', 2);
+                int nr = int.Parse(splitted[0]);
+                string newUrl = splitted[1];
+
+                HotfixRecord hotfixAllowList = new HotfixRecord();
+                hotfixAllowList.HotfixId = 9999999_00;
+                hotfixAllowList.Status = HotfixStatus.Valid;
+                hotfixAllowList.RecordId = 1;
+                hotfixAllowList.UniqueId = hotfixAllowList.HotfixId;
+                hotfixAllowList.TableHash = DB2Hash.WbAccessControlList;
+                hotfixAllowList.HotfixContent.WriteCString("*");
+                hotfixAllowList.HotfixContent.WriteUInt32(0b110000101101010); // GrandFlags
+                hotfixAllowList.HotfixContent.WriteUInt32(0); // RevokeFlags
+                hotfixAllowList.HotfixContent.WriteUInt32(0); // Unknown
+                hotfixAllowList.HotfixContent.WriteUInt32(0); // RegionalID
+
+                HotfixRecord hotfixUrl = new HotfixRecord();
+                hotfixUrl.HotfixId = 9999999_01;
+                hotfixUrl.Status = HotfixStatus.Valid;
+                hotfixUrl.RecordId = 42880; // <-- TODO use real ID
+                hotfixUrl.UniqueId = hotfixUrl.HotfixId;
+                hotfixUrl.TableHash = DB2Hash.GlobalStrings;
+                hotfixUrl.HotfixContent.WriteCString("VISITABLE_URL" + nr);
+                hotfixUrl.HotfixContent.WriteCString(newUrl);
+                hotfixUrl.HotfixContent.WriteUInt32(0b11); // Flags: FRAMEXML | GLUEXML
+
+                HotFixMessage hotfixUpdateMessage = new HotFixMessage();
+                hotfixUpdateMessage.Hotfixes.Add(hotfixUrl);
+                hotfixUpdateMessage.Hotfixes.Add(hotfixAllowList);
+                SendPacketToClient(hotfixUpdateMessage);
+
+                return true;
+            }
+
+            return false;
         }
 
         [PacketHandler(Opcode.SMSG_CHAT, ClientVersionBuild.V2_0_1_6180)]
@@ -357,8 +411,18 @@ namespace HermesProxy.World.Client
             }
 
             string addonPrefix = "";
-            if (!ChatPkt.CheckAddonPrefix(GetSession().GameState.AddonPrefixes, ref language, ref text, ref addonPrefix))
-                return;
+            if (language == (uint) Language.Addon)
+            {
+                bool isRegisteredPrefix = ChatPkt.CheckAddonPrefix(GetSession().GameState.AddonPrefixes, ref language, ref text, out addonPrefix);
+                if (sender == GetSession().GameState.CurrentPlayerGuid)
+                {
+                    bool wasHermesProxyMessage = TryHandleHermesProxyAddonMessage(addonPrefix, text);
+                    if (wasHermesProxyMessage)
+                        return;
+                }
+                if (!isRegisteredPrefix)
+                    return;
+            }
 
             ChatMessageTypeModern chatTypeModern = (ChatMessageTypeModern)Enum.Parse(typeof(ChatMessageTypeModern), chatType.ToString());
             ChatPkt chat = new ChatPkt(GetSession(), chatTypeModern, text, language, sender, senderName, receiver, receiverName, channelName, chatFlags, addonPrefix, achievementId);

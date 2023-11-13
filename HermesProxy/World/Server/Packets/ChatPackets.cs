@@ -321,7 +321,7 @@ namespace HermesProxy.World.Server.Packets
             if (!TargetGUID.IsEmpty())
                 TargetVirtualAddress = globalSession.RealmId.GetAddress();
         }
-        public static bool CheckAddonPrefix(HashSet<string> registeredPrefixes, ref uint language, ref string text, ref string addonPrefix)
+        public static bool CheckAddonPrefix(HashSet<string> registeredPrefixes, ref uint language, ref string text, out string? addonPrefix)
         {
             if (language == (uint)Language.Addon)
             {
@@ -337,8 +337,12 @@ namespace HermesProxy.World.Server.Packets
                         return false;
                 }
                 else
+                {
+                    addonPrefix = null;
                     return false;
+                }
             }
+            addonPrefix = null;
             return true;
         }
         public override void Write()
